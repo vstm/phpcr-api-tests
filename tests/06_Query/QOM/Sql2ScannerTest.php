@@ -45,4 +45,35 @@ class Sql2ScannerTest extends \PHPCR\Test\BaseCase
         $this->assertEquals('', $scanner->lookupNextToken());
         $this->assertEquals('', $scanner->fetchNextToken());
     }
+
+    public function testStringLiteral() {
+        $testdata = array(
+            array('  "hello world"   ', array('"hello world"')),
+            array('  \'hello world\'  ', array('\'hello world\'')),
+            array('  "escaped \" double-quote"   ', array('"escaped " double-quote"')),
+            array('   \'escaped \\\' quote\'  ', array('\'escaped \' quote\'')),
+        );
+
+
+        foreach($testdata as $test) {
+            list($input, $expectedTokens) = $test;
+
+            $scanner = new Sql2Scanner($input);
+
+            foreach($expectedTokens as $expected) {
+                $token = $scanner->fetchNextToken();
+                $this->assertEquals($expected, $token);
+            }
+
+            $this->assertEquals('', $scanner->fetchNextToken());
+        }
+    }
+
+    public function testInvalidStringLiteral() {
+
+    }
+
+    public function testNumberLiteral() {
+
+    }
 }
