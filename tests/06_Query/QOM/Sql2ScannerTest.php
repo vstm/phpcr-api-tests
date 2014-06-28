@@ -79,7 +79,7 @@ class Sql2ScannerTest extends \PHPCR\Test\BaseCase
     }
 
     /**
-     * @expectedException InvalidQueryException
+     * @expectedException PHPCR\Query\InvalidQueryException
      */
     public function testInvalidStringLiteral() {
         $scanner = new Sql2Scanner("\"test test exception ");
