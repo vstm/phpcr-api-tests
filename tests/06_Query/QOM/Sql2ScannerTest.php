@@ -4,6 +4,7 @@ namespace PHPCR\Tests\Query\QOM;
 require_once(__DIR__ . '/../../../inc/BaseCase.php');
 
 use PHPCR\Util\QOM\Sql2Scanner;
+use PHPCR\Query\InvalidQueryException;
 
 /**
  * Test for PHPCR\Util\QOM\Sql2Scanner
