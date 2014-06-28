@@ -46,6 +46,26 @@ class Sql2ScannerTest extends \PHPCR\Test\BaseCase
         $this->assertEquals('', $scanner->fetchNextToken());
     }
 
+    private function executeSingleParserTest($input, $expectedTokens, $testEOF = true) {
+        $scanner = new Sql2Scanner($input);
+
+        foreach($expectedTokens as $expected) {
+            $token = $scanner->fetchNextToken();
+            $this->assertEquals($expected, $token);
+        }
+
+        if($testEOF) {
+            $this->assertEquals('', $scanner->fetchNextToken());
+        }
+    }
+
+    private function executeParserTests($testData, $testEOF = true) {
+        foreach($testData as $test) {
+            list($input, $expectedTokens) = $test;
+            $this->executeSingleParserTest($input, $expectedTokens, $testEOF);
+        }
+    }
+
     public function testStringLiteral() {
         $testdata = array(
             array('  "hello world"   ', array('"hello world"')),
@@ -54,26 +74,23 @@ class Sql2ScannerTest extends \PHPCR\Test\BaseCase
             array('   \'escaped \\\' quote\'  ', array('\'escaped \' quote\'')),
         );
 
-
-        foreach($testdata as $test) {
-            list($input, $expectedTokens) = $test;
-
-            $scanner = new Sql2Scanner($input);
-
-            foreach($expectedTokens as $expected) {
-                $token = $scanner->fetchNextToken();
-                $this->assertEquals($expected, $token);
-            }
-
-            $this->assertEquals('', $scanner->fetchNextToken());
-        }
+        $this->executeParserTests($testdata);
     }
 
+    /**
+     * @expectedException InvalidQueryException
+     */
     public function testInvalidStringLiteral() {
-
+        $scanner = new Sql2Scanner("\"test test exception ");
     }
 
     public function testNumberLiteral() {
+        $testdata = array(
+            array(' 1 ', array('1')),
+            array(' 3.14 ', array('3.14')),
+            array(' 0.314e1 ', array('0.314e1')),
+        );
 
+        $this->executeParserTests($testdata);
     }
 }
